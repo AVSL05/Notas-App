@@ -1,0 +1,51 @@
+# First Commit Explanation:
+# This commit includes:
+# - Basic Flutter app structure with Clean Architecture
+# - Rich Text Editor module with flutter_quill integration  
+# - Full compatibility with Flutter 3.32.8
+# - Core navigation and theming setup
+# - Foundation for notes application with calendar integration
+
+# Flutter/Dart files
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# IDE files
+.vscode/settings.json
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build outputs
+*.dSYM.zip
+*.ipa
+*.apk
+*.aab
+
+# Coverage
+coverage/
+lcov.info
+
+# Hive database files
+*.hive
+*.lock
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.production
+
+# Generated files
+*.g.dart
+*.freezed.dart
+*.config.dart
+*.mocks.dart
