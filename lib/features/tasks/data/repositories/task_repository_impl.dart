@@ -51,17 +51,6 @@ class TaskRepositoryImpl implements TaskRepository {
   }
 
   @override
-  Future<Either<Failure, void>> saveTasks(List<Task> tasks) async {
-    try {
-      final taskModels = tasks.map((task) => TaskModel.fromEntity(task)).toList();
-      await _localDataSource.saveTasks(taskModels);
-      return const Right(null);
-    } catch (e) {
-      return Left(LocalFailure(message: 'Error al guardar las tareas: ${e.toString()}'));
-    }
-  }
-
-  @override
   Future<Either<Failure, void>> deleteTask(String id) async {
     try {
       await _localDataSource.deleteTask(id);

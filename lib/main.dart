@@ -1,28 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:timezone/data/latest.dart' as tz;
-
-import 'core/di/injection_container.dart' as di;
-import 'core/theme/app_theme.dart';
-import 'core/routes/app_router.dart';
-import 'core/notifications/notification_service.dart';
+import 'core/config/app_router.dart';
+import 'injection_container.dart' as di;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Initialize Hive
-  await Hive.initFlutter();
-  
-  // Initialize timezone data
-  tz.initializeTimeZones();
-  
-  // Initialize notifications
-  await NotificationService.initialize();
-  
-  // Initialize dependency injection
-  await di.init();
-  
-  runApp(const NotasApp());
+  try {
+    // Initialize dependency injection
+    await di.init();
+    
+    runApp(const NotasApp());
+  } catch (e) {
+    // Mostrar error en caso de fallo crítico
+    runApp(MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error, size: 64, color: Colors.red),
+              const SizedBox(height: 16),
+              const Text(
+                'Error de inicialización',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Text('$e'),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  // Intentar reiniciar la app
+                  main();
+                },
+                child: const Text('Reintentar'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ));
+  }
 }
 
 class NotasApp extends StatelessWidget {
@@ -31,11 +48,20 @@ class NotasApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Notas App',
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
+      title: 'Notas App - Tasks Module',
       routerConfig: AppRouter.router,
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        useMaterial3: true,
+      ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
+      ),
     );
   }
 }
