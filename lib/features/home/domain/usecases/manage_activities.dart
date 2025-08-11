@@ -1,52 +1,68 @@
 import 'package:dartz/dartz.dart';
-import '../../../../core/error/failures.dart';
-import '../entities/dashboard_summary.dart';
-import '../repositories/dashboard_repository.dart';
+import 'package:equatable/equatable.dart';
+import 'package:notas_app/core/error/failures.dart';
+import 'package:notas_app/core/usecases/usecase.dart';
+import 'package:notas_app/features/home/domain/entities/dashboard_summary.dart';
+import 'package:notas_app/features/home/domain/repositories/dashboard_repository.dart';
 
 /// Caso de uso para obtener actividades recientes
-class GetRecentActivities {
+class GetRecentActivities
+    implements UseCase<List<RecentActivity>, GetRecentActivitiesParams> {
   final DashboardRepository repository;
 
-  const GetRecentActivities(this.repository);
+  GetRecentActivities(this.repository);
 
-  Future<Either<Failure, List<RecentActivity>>> call({int limit = 10}) async {
+  @override
+  Future<Either<Failure, List<RecentActivity>>> call(
+      GetRecentActivitiesParams params) async {
     try {
-      final activities = await repository.getRecentActivities(limit: limit);
+      final activities = await repository.getRecentActivities(limit: params.limit);
       return Right(activities);
     } catch (e) {
-      return Left(CacheFailure('Error al obtener actividades recientes: $e'));
+      return Left(CacheFailure(message: 'Error al obtener actividades: $e'));
     }
   }
 }
 
-/// Caso de uso para registrar una nueva actividad
-class RecordActivity {
+class GetRecentActivitiesParams extends Equatable {
+  final int limit;
+
+  const GetRecentActivitiesParams({this.limit = 10});
+
+  @override
+  List<Object?> get props => [limit];
+}
+
+/// Caso de uso para registrar una actividad
+class RecordActivity implements UseCase<void, RecentActivity> {
   final DashboardRepository repository;
 
-  const RecordActivity(this.repository);
+  RecordActivity(this.repository);
 
-  Future<Either<Failure, void>> call(RecentActivity activity) async {
+  @override
+  Future<Either<Failure, void>> call(RecentActivity params) async {
     try {
-      await repository.recordActivity(activity);
+      await repository.recordActivity(params);
       return const Right(null);
     } catch (e) {
-      return Left(CacheFailure('Error al registrar actividad: $e'));
+      return Left(CacheFailure(message: 'Error al registrar actividad: $e'));
     }
   }
 }
 
 /// Caso de uso para limpiar actividades antiguas
-class CleanupOldActivities {
+class CleanupOldActivities implements UseCase<void, NoParams> {
   final DashboardRepository repository;
 
-  const CleanupOldActivities(this.repository);
+  CleanupOldActivities(this.repository);
 
-  Future<Either<Failure, void>> call() async {
+  @override
+  Future<Either<Failure, void>> call(NoParams params) async {
     try {
       await repository.cleanupOldActivities();
       return const Right(null);
     } catch (e) {
-      return Left(CacheFailure('Error al limpiar actividades antiguas: $e'));
+      return Left(CacheFailure(message: 'Error al limpiar actividades: $e'));
     }
   }
 }

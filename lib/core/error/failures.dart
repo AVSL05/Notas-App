@@ -44,3 +44,8 @@ class FormatFailure extends Failure {
 class UnexpectedFailure extends Failure {
   const UnexpectedFailure({required super.message});
 }
+
+/// Fallo de caché
+class CacheFailure extends Failure {
+  const CacheFailure({required super.message});
+}

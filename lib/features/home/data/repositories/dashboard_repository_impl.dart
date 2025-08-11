@@ -14,7 +14,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
   @override
   Future<DashboardSummary> getDashboardSummary() async {
     final summary = await localDataSource.getDashboardSummary();
-    return summary ?? DashboardSummaryModel.empty();
+    return summary ?? DashboardSummary.empty;
   }
 
   @override
@@ -22,25 +22,20 @@ class DashboardRepositoryImpl implements DashboardRepository {
     // Esta función será implementada para calcular métricas reales
     // Por ahora creamos un resumen de ejemplo
     final now = DateTime.now();
-    
+
     // TODO: Implementar cálculo real de métricas desde otras fuentes de datos
     // Esto debería integrar con NotesRepository, TasksRepository, etc.
-    
+
     final summary = DashboardSummaryModel(
       totalNotes: 0, // TODO: Obtener de NotesRepository
-      totalTasks: 0, // TODO: Obtener de TasksRepository  
       completedTasks: 0, // TODO: Calcular tareas completadas
-      pendingTasks: 0, // TODO: Calcular tareas pendientes
-      pinnedNotes: 0, // TODO: Contar notas fijadas
-      favoriteNotes: 0, // TODO: Contar notas favoritas
-      upcomingReminders: 0, // TODO: Contar recordatorios próximos
-      todayEvents: 0, // TODO: Obtener eventos de hoy
-      archivedNotes: 0, // TODO: Contar notas archivadas
+      totalCategories: 0, // TODO: Obtener de CategoryRepository
+      productivityScore: 0.0, // TODO: Calcular
+      quickActions: [], // Se inicializa vacío, se puede poblar después
+      recentActivities: [], // Se inicializa vacío
       lastUpdated: now,
-      topCategories: [], // TODO: Calcular categorías más usadas
-      productivityMetrics: {}, // TODO: Calcular métricas de productividad
     );
-    
+
     await localDataSource.saveDashboardSummary(summary);
   }
 
@@ -52,9 +47,8 @@ class DashboardRepositoryImpl implements DashboardRepository {
 
   @override
   Future<void> updateQuickActions(List<QuickAction> actions) async {
-    final actionModels = actions
-        .map((action) => QuickActionModel.fromEntity(action))
-        .toList();
+    final actionModels =
+        actions.map((action) => QuickActionModel.fromEntity(action)).toList();
     await localDataSource.saveQuickActions(actionModels);
   }
 
@@ -98,11 +92,13 @@ class DashboardRepositoryImpl implements DashboardRepository {
   @override
   Future<void> resetDashboardData() async {
     await localDataSource.clearDashboardData();
-    
+
     // Reinicializar con acciones rápidas por defecto
-    final defaultActions = QuickActionModel.getDefaultActions();
+    final defaultActions = QuickAction.getDefaultActions()
+        .map((e) => QuickActionModel.fromEntity(e))
+        .toList();
     await localDataSource.saveQuickActions(defaultActions);
-    
+
     // Crear resumen inicial
     await updateDashboardMetrics();
   }

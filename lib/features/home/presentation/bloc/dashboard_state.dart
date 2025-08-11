@@ -33,9 +33,9 @@ class DashboardLoaded extends DashboardState {
   });
 
   /// Verifica si hay datos para mostrar
-  bool get hasData => 
-      summary.totalNotes > 0 || 
-      summary.totalTasks > 0 || 
+  bool get hasData =>
+      summary.totalNotes > 0 ||
+      summary.completedTasks > 0 || // Se debe usar completedTasks o una métrica similar
       recentActivities.isNotEmpty;
 
   /// Obtiene el saludo basado en la hora del día
@@ -47,12 +47,35 @@ class DashboardLoaded extends DashboardState {
   }
 
   /// Obtiene mensaje motivacional basado en productividad
+  String get motivationalMessage {
+    switch (summary.productivityLevel) {
+      case ProductivityLevel.low:
+        return 'Un pequeño paso puede hacer una gran diferencia.';
+      case ProductivityLevel.medium:
+        return '¡Buen trabajo! Sigue así.';
+      case ProductivityLevel.high:
+        return '¡Estás en racha! Excelente progreso.';
+      case ProductivityLevel.excellent:
+        return '¡Imparable! Estás superando todas las expectativas.';
+      default:
+        return 'Comienza a organizar tu día para ver tu progreso.';
+    }
+  }
+
+  /// Obtiene el color asociado a un nivel de productividad
   Color getProductivityColor(ProductivityLevel level) {
-    if (level == ProductivityLevel.low) return Colors.red;
-    if (level == ProductivityLevel.medium) return Colors.orange;
-    if (level == ProductivityLevel.high) return Colors.blue;
-    if (level == ProductivityLevel.excellent) return Colors.green;
-    return Colors.grey;
+    switch (level) {
+      case ProductivityLevel.low:
+        return Colors.red;
+      case ProductivityLevel.medium:
+        return Colors.orange;
+      case ProductivityLevel.high:
+        return Colors.blue;
+      case ProductivityLevel.excellent:
+        return Colors.green;
+      default:
+        return Colors.grey;
+    }
   }
 
   @override

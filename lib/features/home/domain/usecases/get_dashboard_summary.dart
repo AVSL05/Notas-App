@@ -1,20 +1,22 @@
 import 'package:dartz/dartz.dart';
-import '../../../../core/error/failures.dart';
-import '../entities/dashboard_summary.dart';
-import '../repositories/dashboard_repository.dart';
+import 'package:notas_app/core/error/failures.dart';
+import 'package:notas_app/core/usecases/usecase.dart';
+import 'package:notas_app/features/home/domain/entities/dashboard_summary.dart';
+import 'package:notas_app/features/home/domain/repositories/dashboard_repository.dart';
 
 /// Caso de uso para obtener el resumen del dashboard
-class GetDashboardSummary {
+class GetDashboardSummary implements UseCase<DashboardSummary, NoParams> {
   final DashboardRepository repository;
 
-  const GetDashboardSummary(this.repository);
+  GetDashboardSummary(this.repository);
 
-  Future<Either<Failure, DashboardSummary>> call() async {
+  @override
+  Future<Either<Failure, DashboardSummary>> call(NoParams params) async {
     try {
       final summary = await repository.getDashboardSummary();
       return Right(summary);
     } catch (e) {
-      return Left(CacheFailure('Error al obtener resumen del dashboard: $e'));
+      return Left(CacheFailure(message: 'Error al obtener el resumen: $e'));
     }
   }
 }

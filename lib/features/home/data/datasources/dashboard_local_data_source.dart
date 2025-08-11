@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import '../models/dashboard_summary_model.dart';
+import 'package:notas_app/features/home/data/models/dashboard_summary_model.dart';
 
 /// Datasource local para datos del dashboard usando Hive
 abstract class DashboardLocalDataSource {
@@ -48,7 +48,6 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
   static const String _settingsBox = 'dashboard_settings_box';
   
   static const String _summaryKey = 'dashboard_summary';
-  static const String _actionsKey = 'quick_actions';
   static const String _settingsKey = 'dashboard_settings';
 
   Box<DashboardSummaryModel>? _dashboardBox_;
@@ -94,15 +93,50 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
     
     // Si no hay acciones guardadas, retornamos las por defecto
     if (box.isEmpty) {
-      final defaultActions = QuickActionModel.getDefaultActions();
+      final defaultActions = _getDefaultActions();
       await saveQuickActions(defaultActions);
       return defaultActions;
     }
     
     final actions = box.values.toList();
     // Ordenar por sortOrder
-    actions.sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
+    actions.sort((a, b) => (a.sortOrder ?? 0).compareTo(b.sortOrder ?? 0));
     return actions;
+  }
+
+  List<QuickActionModel> _getDefaultActions() {
+    return [
+      QuickActionModel(
+        id: 'create_note',
+        title: 'Nueva Nota',
+        description: 'Crear una nueva nota',
+        iconData: 'add',
+        route: '/notes/new',
+        isEnabled: true,
+        createdAt: DateTime.now(),
+        sortOrder: 1,
+      ),
+      QuickActionModel(
+        id: 'create_task',
+        title: 'Nueva Tarea',
+        description: 'Crear una nueva tarea',
+        iconData: 'task_alt',
+        route: '/tasks/new',
+        isEnabled: true,
+        createdAt: DateTime.now(),
+        sortOrder: 2,
+      ),
+      QuickActionModel(
+        id: 'view_calendar',
+        title: 'Calendario',
+        description: 'Ver el calendario',
+        iconData: 'calendar_today',
+        route: '/calendar',
+        isEnabled: true,
+        createdAt: DateTime.now(),
+        sortOrder: 3,
+      ),
+    ];
   }
 
   @override

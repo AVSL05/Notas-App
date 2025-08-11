@@ -1,6 +1,12 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notas_app/features/tasks/domain/usecases/manage_tasks.dart'
+    as usecases;
+import '../../features/tasks/presentation/pages/tasks_page.dart';
 import '../../features/tasks/presentation/pages/placeholder_pages.dart';
+import '../../features/tasks/presentation/bloc/tasks_bloc.dart';
+import '../../injection_container.dart' as di;
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -9,32 +15,18 @@ class AppRouter {
       // Ruta principal de Tasks
       GoRoute(
         path: '/tasks',
-        builder: (context, state) => const TasksPlaceholderPage(),
-        routes: [
-          // Crear nueva tarea
-          GoRoute(
-            path: '/create',
-            builder: (context, state) => const TaskFormPlaceholderPage(),
-          ),
-          // Ver detalles de tarea
-          GoRoute(
-            path: '/:taskId',
-            builder: (context, state) {
-              final taskId = state.pathParameters['taskId']!;
-              return TaskDetailsPlaceholderPage(taskId: taskId);
-            },
-            routes: [
-              // Editar tarea específica
-              GoRoute(
-                path: '/edit',
-                builder: (context, state) {
-                  final taskId = state.pathParameters['taskId']!;
-                  return TaskFormPlaceholderPage(taskId: taskId);
-                },
-              ),
-            ],
-          ),
-        ],
+        name: 'tasks',
+        builder: (context, state) {
+          return BlocProvider<TasksBloc>(
+            create: (context) => TasksBloc(
+              createTask: di.sl<usecases.CreateTask>(),
+              deleteTask: di.sl<usecases.DeleteTask>(),
+              getAllTasks: di.sl<usecases.GetAllTasks>(),
+              updateTask: di.sl<usecases.UpdateTask>(),
+            )..add(const LoadTasks()),
+            child: const TasksPage(),
+          );
+        },
       ),
       
       // Rutas de categorías

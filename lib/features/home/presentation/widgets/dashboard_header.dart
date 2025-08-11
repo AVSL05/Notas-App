@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
+import '../../domain/entities/dashboard_summary.dart';
 
 /// Widget del encabezado del dashboard
 class DashboardHeader extends StatelessWidget {
-  final String greeting;
-  final String motivationalMessage;
-  final bool hasData;
+  final DashboardSummary summary;
 
   const DashboardHeader({
     super.key,
-    required this.greeting,
-    required this.motivationalMessage,
-    required this.hasData,
+    required this.summary,
   });
 
   @override
@@ -36,7 +33,7 @@ class DashboardHeader extends StatelessWidget {
           children: [
             // Saludo principal
             Text(
-              greeting,
+              summary.greeting,
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: colorScheme.primary,
@@ -47,7 +44,7 @@ class DashboardHeader extends StatelessWidget {
             
             // Mensaje motivacional
             Text(
-              motivationalMessage,
+              summary.motivationalMessage,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: colorScheme.onSurface.withOpacity(0.7),
               ),
@@ -59,17 +56,17 @@ class DashboardHeader extends StatelessWidget {
             Row(
               children: [
                 Icon(
-                  hasData ? Icons.check_circle : Icons.info_outline,
+                  summary.hasData ? Icons.check_circle : Icons.info_outline,
                   size: 16,
-                  color: hasData ? Colors.green : Colors.orange,
+                  color: summary.hasData ? Colors.green : Colors.orange,
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  hasData 
+                  summary.hasData 
                       ? 'Todo al día' 
                       : 'Comienza creando tu primera nota',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: hasData ? Colors.green : Colors.orange,
+                    color: summary.hasData ? Colors.green : Colors.orange,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

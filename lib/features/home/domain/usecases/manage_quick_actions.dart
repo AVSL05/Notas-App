@@ -1,36 +1,39 @@
 import 'package:dartz/dartz.dart';
+import 'package:notas_app/core/usecases/usecase.dart';
 import '../../../../core/error/failures.dart';
 import '../entities/dashboard_summary.dart';
 import '../repositories/dashboard_repository.dart';
 
 /// Caso de uso para obtener las acciones rápidas del dashboard
-class GetQuickActions {
+class GetQuickActions implements UseCase<List<QuickAction>, NoParams> {
   final DashboardRepository repository;
 
-  const GetQuickActions(this.repository);
+  GetQuickActions(this.repository);
 
-  Future<Either<Failure, List<QuickAction>>> call() async {
+  @override
+  Future<Either<Failure, List<QuickAction>>> call(NoParams params) async {
     try {
       final actions = await repository.getQuickActions();
       return Right(actions);
     } catch (e) {
-      return Left(CacheFailure());
+      return Left(CacheFailure(message: 'Error al obtener acciones rápidas: $e'));
     }
   }
 }
 
 /// Caso de uso para actualizar las acciones rápidas
-class UpdateQuickActions {
+class UpdateQuickActions implements UseCase<void, List<QuickAction>> {
   final DashboardRepository repository;
 
-  const UpdateQuickActions(this.repository);
+  UpdateQuickActions(this.repository);
 
-  Future<Either<Failure, void>> call(List<QuickAction> actions) async {
+  @override
+  Future<Either<Failure, void>> call(List<QuickAction> params) async {
     try {
-      await repository.updateQuickActions(actions);
+      await repository.updateQuickActions(params);
       return const Right(null);
     } catch (e) {
-      return Left(CacheFailure('Error al actualizar acciones rápidas: $e'));
+      return Left(CacheFailure(message: 'Error al actualizar acciones rápidas: $e'));
     }
   }
 }

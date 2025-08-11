@@ -82,8 +82,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         builder: (context, state) {
           if (state is DashboardLoaded) {
             return DashboardFab(
-              onCreateNote: () => _handleQuickAction(QuickActionType.createNote),
-              onCreateTask: () => _handleQuickAction(QuickActionType.createTaskList),
+              onCreateNote: () => _handleQuickAction(state.quickActions.firstWhere((a) => a.id == 'create_note')),
+              onCreateTask: () => _handleQuickAction(state.quickActions.firstWhere((a) => a.id == 'create_task')),
             );
           }
           return const SizedBox.shrink();
@@ -102,7 +102,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       return Center(
         child: CustomErrorWidget(
           message: state.message,
-          details: state.details,
           onRetry: () {
             context.read<DashboardBloc>().add(const LoadDashboard());
           },
@@ -114,8 +113,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       return _buildDashboardContent(context, state);
     }
 
-    // Estado inicial o desconocido
-    return const Center(child: LoadingWidget());
+    return const SizedBox.shrink();
   }
 
   /// Construye el contenido principal del dashboard
@@ -132,9 +130,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             flexibleSpace: FlexibleSpaceBar(
               background: DashboardHeader(
-                greeting: state.greeting,
-                motivationalMessage: state.motivationalMessage,
-                hasData: state.hasData,
+                summary: state.summary,
               ),
             ),
             bottom: TabBar(
@@ -195,7 +191,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           
           QuickActionsGrid(
             actions: state.quickActions,
-            onActionTap: _handleQuickAction,
+            onActionTap: (type) {
+              final action = state.quickActions.firstWhere((a) => a.type == type);
+              _handleQuickAction(action);
+            },
             onActionLongPress: _handleQuickActionLongPress,
           ),
           
@@ -376,7 +375,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
           const SizedBox(height: 24),
           ElevatedButton.icon(
-            onPressed: () => _handleQuickAction(QuickActionType.createNote),
+            onPressed: () {
+              final createNoteAction = (context.read<DashboardBloc>().state as DashboardLoaded)
+                  .quickActions
+                  .firstWhere((a) => a.id == 'create_note');
+              _handleQuickAction(createNoteAction);
+            },
             icon: const Icon(Icons.note_add),
             label: const Text('Crear Primera Nota'),
           ),
@@ -448,42 +452,42 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   /// Maneja la ejecución de una acción rápida
-  void _handleQuickAction(QuickActionType actionType) {
+  void _handleQuickAction(QuickAction action) {
     context.read<DashboardBloc>().add(
-      ExecuteQuickAction(actionType: actionType),
+      ExecuteQuickAction(action: action),
     );
     
     // TODO: Implementar navegación específica para cada acción
-    switch (actionType) {
-      case QuickActionType.createNote:
+    switch (action.id) {
+      case 'create_note':
         // Navigator.pushNamed(context, '/notes/create');
         _showNotImplemented(context, 'Crear nota');
         break;
-      case QuickActionType.createTaskList:
+      case 'create_task':
         // Navigator.pushNamed(context, '/tasks/create');
         _showNotImplemented(context, 'Crear lista de tareas');
         break;
-      case QuickActionType.viewCalendar:
+      case 'view_calendar':
         // Navigator.pushNamed(context, '/calendar');
         _showNotImplemented(context, 'Ver calendario');
         break;
-      case QuickActionType.searchNotes:
+      case 'search_notes':
         // Navigator.pushNamed(context, '/search');
         _showNotImplemented(context, 'Buscar notas');
         break;
-      case QuickActionType.viewFavorites:
+      case 'view_favorites':
         // Navigator.pushNamed(context, '/favorites');
         _showNotImplemented(context, 'Ver favoritas');
         break;
-      case QuickActionType.viewArchived:
+      case 'view_archived':
         // Navigator.pushNamed(context, '/archived');
         _showNotImplemented(context, 'Ver archivadas');
         break;
-      case QuickActionType.settings:
+      case 'settings':
         // Navigator.pushNamed(context, '/settings');
         _showNotImplemented(context, 'Configuraciones');
         break;
-      case QuickActionType.backup:
+      case 'backup':
         _showBackupDialog(context);
         break;
     }
@@ -496,7 +500,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   /// Maneja el tap en una actividad
   void _handleActivityTap(RecentActivity activity) {
-    if (activity.relatedItemId != null) {
+    if (activity.entityId.isNotEmpty) {
       // TODO: Navegar al elemento relacionado
       _showNotImplemented(context, 'Navegar a ${activity.title}');
     }
@@ -582,7 +586,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              context.read<DashboardBloc>().add(const CleanupOldActivities());
+              context.read<DashboardBloc>().add(const CleanupOldActivitiesEvent());
             },
             child: const Text('Limpiar'),
           ),

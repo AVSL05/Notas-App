@@ -33,7 +33,7 @@ class NoteModel extends HiveObject {
   final bool isPinned;
 
   @HiveField(9)
-  final String? colorTag;
+  final String colorTag;
 
   @HiveField(10)
   final bool isArchived;
@@ -54,7 +54,7 @@ class NoteModel extends HiveObject {
     required this.updatedAt,
     this.reminderDate,
     this.isPinned = false,
-    this.colorTag,
+    this.colorTag = 'default',
     this.isArchived = false,
     this.isFavorite = false,
     this.category,
@@ -115,7 +115,7 @@ class NoteModel extends HiveObject {
           ? DateTime.parse(json['reminderDate'] as String)
           : null,
       isPinned: json['isPinned'] as bool? ?? false,
-      colorTag: json['colorTag'] as String?,
+      colorTag: json['colorTag'] as String? ?? 'default',
       isArchived: json['isArchived'] as bool? ?? false,
       isFavorite: json['isFavorite'] as bool? ?? false,
       category: json['category'] as String?,

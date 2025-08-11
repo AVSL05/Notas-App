@@ -1,73 +1,75 @@
 import 'package:dartz/dartz.dart';
-import '../../../../core/error/failures.dart';
-import '../repositories/dashboard_repository.dart';
+import 'package:equatable/equatable.dart';
+import 'package:notas_app/core/error/failures.dart';
+import 'package:notas_app/core/usecases/usecase.dart';
+import 'package:notas_app/features/home/domain/repositories/dashboard_repository.dart';
 
-/// Caso de uso para actualizar las métricas del dashboard
-class UpdateDashboardMetrics {
+/// Caso de uso para obtener las configuraciones del dashboard
+class GetDashboardSettings implements UseCase<Map<String, dynamic>, NoParams> {
   final DashboardRepository repository;
 
-  const UpdateDashboardMetrics(this.repository);
+  GetDashboardSettings(this.repository);
 
-  Future<Either<Failure, void>> call() async {
-    try {
-      await repository.updateDashboardMetrics();
-      return const Right(null);
-    } catch (e) {
-      return Left(CacheFailure('Error al actualizar métricas del dashboard: $e'));
-    }
-  }
-}
-
-/// Caso de uso para obtener configuraciones del dashboard
-class GetDashboardSettings {
-  final DashboardRepository repository;
-
-  const GetDashboardSettings(this.repository);
-
-  Future<Either<Failure, Map<String, dynamic>>> call() async {
+  @override
+  Future<Either<Failure, Map<String, dynamic>>> call(NoParams params) async {
     try {
       final settings = await repository.getDashboardSettings();
       return Right(settings);
     } catch (e) {
-      return Left(CacheFailure('Error al obtener configuraciones del dashboard: $e'));
+      return Left(CacheFailure(message: 'Error al obtener configuraciones: $e'));
     }
   }
 }
 
-/// Caso de uso para actualizar configuraciones del dashboard
-class UpdateDashboardSettings {
+/// Caso de uso para actualizar las configuraciones del dashboard
+class UpdateDashboardSettings
+    implements UseCase<void, Map<String, dynamic>> {
   final DashboardRepository repository;
 
   const UpdateDashboardSettings(this.repository);
 
-  Future<Either<Failure, void>> call(Map<String, dynamic> settings) async {
+  @override
+  Future<Either<Failure, void>> call(Map<String, dynamic> params) async {
     try {
-      await repository.updateDashboardSettings(settings);
+      await repository.updateDashboardSettings(params);
       return const Right(null);
     } catch (e) {
-      return Left(CacheFailure('Error al actualizar configuraciones del dashboard: $e'));
+      return Left(CacheFailure(message: 'Error al actualizar configuraciones: $e'));
     }
   }
 }
 
 /// Caso de uso para obtener estadísticas de productividad
-class GetProductivityStats {
+class GetProductivityStats
+    implements UseCase<Map<String, dynamic>, GetProductivityStatsParams> {
   final DashboardRepository repository;
 
   const GetProductivityStats(this.repository);
 
-  Future<Either<Failure, Map<String, dynamic>>> call({
-    required DateTime startDate,
-    required DateTime endDate,
-  }) async {
+  @override
+  Future<Either<Failure, Map<String, dynamic>>> call(
+      GetProductivityStatsParams params) async {
     try {
       final stats = await repository.getProductivityStats(
-        startDate: startDate,
-        endDate: endDate,
+        startDate: params.startDate,
+        endDate: params.endDate,
       );
       return Right(stats);
     } catch (e) {
-      return Left(CacheFailure('Error al obtener estadísticas de productividad: $e'));
+      return Left(CacheFailure(message: 'Error al obtener estadísticas: $e'));
     }
   }
+}
+
+class GetProductivityStatsParams extends Equatable {
+  final DateTime startDate;
+  final DateTime endDate;
+
+  const GetProductivityStatsParams({
+    required this.startDate,
+    required this.endDate,
+  });
+
+  @override
+  List<Object?> get props => [startDate, endDate];
 }

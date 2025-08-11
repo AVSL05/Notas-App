@@ -9,7 +9,7 @@ import '../widgets/notes_floating_action_button.dart';
 import '../widgets/notes_drawer.dart';
 import '../widgets/empty_notes_widget.dart';
 import '../widgets/notes_loading_widget.dart';
-import '../widgets/notes_error_widget.dart';
+import '../widgets/notes_error_widget.dart' as error_widget;
 
 /// Página principal que muestra la lista de notas
 class NotesPage extends StatefulWidget {
@@ -98,7 +98,7 @@ class _NotesPageState extends State<NotesPage> {
           if (state is NotesLoading) {
             return const NotesLoadingWidget();
           } else if (state is NotesError) {
-            return NotesErrorWidget(
+            return error_widget.NotesErrorWidget(
               message: state.message,
               onRetry: () => context.read<NotesBloc>().add(LoadNotesEvent()),
             );
