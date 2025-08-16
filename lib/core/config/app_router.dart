@@ -6,6 +6,7 @@ import 'package:notas_app/features/tasks/domain/usecases/manage_tasks.dart'
 import '../../features/tasks/presentation/pages/tasks_page.dart';
 import '../../features/tasks/presentation/pages/placeholder_pages.dart';
 import '../../features/tasks/presentation/bloc/tasks_bloc.dart';
+import '../../features/tasks/presentation/bloc/tasks_event.dart';
 import '../../injection_container.dart' as di;
 
 class AppRouter {
@@ -19,8 +20,8 @@ class AppRouter {
         builder: (context, state) {
           return BlocProvider<TasksBloc>(
             create: (context) => TasksBloc(
-              createTask: di.sl<usecases.CreateTask>(),
-              deleteTask: di.sl<usecases.DeleteTask>(),
+              createTaskUseCase: di.sl<usecases.CreateTask>(),
+              deleteTaskUseCase: di.sl<usecases.DeleteTask>(),
               getAllTasks: di.sl<usecases.GetAllTasks>(),
               updateTask: di.sl<usecases.UpdateTask>(),
             )..add(const LoadTasks()),
