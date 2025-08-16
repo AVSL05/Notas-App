@@ -1,5 +1,7 @@
+import 'package:dartz/dartz.dart' hide Task;
 import '../entities/note.dart';
 import '../repositories/notes_repository.dart';
+import '../../../../core/error/failures.dart';
 
 /// Caso de uso para actualizar una nota
 class UpdateNote {
@@ -7,15 +9,11 @@ class UpdateNote {
 
   const UpdateNote(this.repository);
 
-  Future<Note> call(Note note) async {
-    try {
-      final updatedNote = note.copyWith(
-        updatedAt: DateTime.now(),
-      );
-      return await repository.updateNote(updatedNote);
-    } catch (e) {
-      throw Exception('Error al actualizar la nota: $e');
-    }
+  Future<Either<Failure, Note>> call(Note note) async {
+    final updatedNote = note.copyWith(
+      updatedAt: DateTime.now(),
+    );
+    return await repository.updateNote(updatedNote);
   }
 }
 
@@ -25,12 +23,8 @@ class DeleteNote {
 
   const DeleteNote(this.repository);
 
-  Future<void> call(String id) async {
-    try {
-      await repository.deleteNote(id);
-    } catch (e) {
-      throw Exception('Error al eliminar la nota: $e');
-    }
+  Future<Either<Failure, void>> call(String id) async {
+    return await repository.deleteNote(id);
   }
 }
 
@@ -40,11 +34,7 @@ class DeleteMultipleNotes {
 
   const DeleteMultipleNotes(this.repository);
 
-  Future<void> call(List<String> ids) async {
-    try {
-      await repository.deleteNotes(ids);
-    } catch (e) {
-      throw Exception('Error al eliminar las notas: $e');
-    }
+  Future<Either<Failure, void>> call(List<String> ids) async {
+    return await repository.deleteNotes(ids);
   }
 }

@@ -7,8 +7,8 @@ import '../widgets/note_card.dart';
 import '../widgets/notes_app_bar.dart';
 import '../widgets/notes_floating_action_button.dart';
 import '../widgets/notes_drawer.dart';
-import '../widgets/empty_notes_widget.dart';
-import '../widgets/notes_loading_widget.dart';
+import '../widgets/empty_notes_widget.dart' as empty_widget;
+import '../widgets/notes_loading_widget.dart' as loading_widget;
 import '../widgets/notes_error_widget.dart' as error_widget;
 
 /// Página principal que muestra la lista de notas
@@ -96,7 +96,7 @@ class _NotesPageState extends State<NotesPage> {
         },
         builder: (context, state) {
           if (state is NotesLoading) {
-            return const NotesLoadingWidget();
+            return const loading_widget.NotesLoadingWidget();
           } else if (state is NotesError) {
             return error_widget.NotesErrorWidget(
               message: state.message,
@@ -108,7 +108,7 @@ class _NotesPageState extends State<NotesPage> {
                 : (state as NotesSearchResults).results;
 
             if (notes.isEmpty) {
-              return EmptyNotesWidget(
+              return empty_widget.EmptyNotesWidget(
                 isSearching: _isSearching,
                 searchQuery: state is NotesSearchResults ? state.query : null,
               );
@@ -144,7 +144,7 @@ class _NotesPageState extends State<NotesPage> {
             );
           }
 
-          return const EmptyNotesWidget(isSearching: false);
+          return const empty_widget.EmptyNotesWidget(isSearching: false);
         },
       ),
       floatingActionButton: const NotesFloatingActionButton(),

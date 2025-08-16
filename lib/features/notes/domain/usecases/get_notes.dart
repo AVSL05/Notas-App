@@ -1,5 +1,7 @@
+import 'package:dartz/dartz.dart';
 import '../entities/note.dart';
 import '../repositories/notes_repository.dart';
+import '../../../../core/error/failures.dart';
 
 /// Caso de uso para obtener todas las notas
 class GetAllNotes {
@@ -7,11 +9,11 @@ class GetAllNotes {
 
   const GetAllNotes(this.repository);
 
-  Future<List<Note>> call() async {
+  Future<Either<Failure, List<Note>>> call() async {
     try {
       return await repository.getAllNotes();
     } catch (e) {
-      throw Exception('Error al obtener todas las notas: $e');
+      return Left(ServerFailure(message: 'Error al obtener todas las notas: $e'));
     }
   }
 }
@@ -22,7 +24,7 @@ class GetFilteredNotes {
 
   const GetFilteredNotes(this.repository);
 
-  Future<List<Note>> call(GetFilteredNotesParams params) async {
+  Future<Either<Failure, List<Note>>> call(GetFilteredNotesParams params) async {
     try {
       return await repository.getFilteredNotes(
         searchQuery: params.searchQuery,

@@ -1,5 +1,7 @@
+import 'package:dartz/dartz.dart' hide Task;
 import '../entities/note.dart';
 import '../repositories/notes_repository.dart';
+import '../../../../core/error/failures.dart';
 
 /// Caso de uso para buscar notas
 class SearchNotes {
@@ -7,15 +9,11 @@ class SearchNotes {
 
   const SearchNotes(this.repository);
 
-  Future<List<Note>> call(String query) async {
-    try {
-      if (query.trim().isEmpty) {
-        return await repository.getAllNotes();
-      }
-      return await repository.searchNotes(query);
-    } catch (e) {
-      throw Exception('Error al buscar notas: $e');
+  Future<Either<Failure, List<Note>>> call(String query) async {
+    if (query.trim().isEmpty) {
+      return await repository.getAllNotes();
     }
+    return await repository.searchNotes(query);
   }
 }
 
@@ -25,12 +23,8 @@ class GetNoteById {
 
   const GetNoteById(this.repository);
 
-  Future<Note?> call(String id) async {
-    try {
-      return await repository.getNoteById(id);
-    } catch (e) {
-      throw Exception('Error al obtener la nota: $e');
-    }
+  Future<Either<Failure, Note?>> call(String id) async {
+    return await repository.getNoteById(id);
   }
 }
 
@@ -40,11 +34,7 @@ class DuplicateNote {
 
   const DuplicateNote(this.repository);
 
-  Future<Note> call(String id) async {
-    try {
-      return await repository.duplicateNote(id);
-    } catch (e) {
-      throw Exception('Error al duplicar la nota: $e');
-    }
+  Future<Either<Failure, Note>> call(String id) async {
+    return await repository.duplicateNote(id);
   }
 }

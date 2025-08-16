@@ -1,4 +1,4 @@
-import 'package:dartz/dartz.dart';
+import 'package:dartz/dartz.dart' hide Task;
 import '../entities/note.dart';
 import '../../../../core/error/failures.dart';
 
@@ -78,10 +78,10 @@ abstract class NotesRepository {
   // ===== GESTIÓN DE TAREAS =====
 
   /// Añade una tarea a una nota
-  Future<Either<Failure, Note>> addTaskToNote(String noteId, Task task);
+  Future<Either<Failure, Note>> addTaskToNote(String noteId, dynamic task);
 
   /// Actualiza una tarea en una nota
-  Future<Either<Failure, Note>> updateTaskInNote(String noteId, Task task);
+  Future<Either<Failure, Note>> updateTaskInNote(String noteId, dynamic task);
 
   /// Elimina una tarea de una nota
   Future<Either<Failure, Note>> removeTaskFromNote(String noteId, String taskId);

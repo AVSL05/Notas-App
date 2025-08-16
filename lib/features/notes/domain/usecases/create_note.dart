@@ -1,5 +1,7 @@
+import 'package:dartz/dartz.dart' hide Task;
 import '../entities/note.dart';
 import '../repositories/notes_repository.dart';
+import '../../../../core/error/failures.dart';
 
 /// Caso de uso para crear una nueva nota
 class CreateNote {
@@ -7,7 +9,7 @@ class CreateNote {
 
   const CreateNote(this.repository);
 
-  Future<Note> call(CreateNoteParams params) async {
+  Future<Either<Failure, Note>> call(CreateNoteParams params) async {
     try {
       final note = Note(
         id: params.id,
@@ -27,7 +29,7 @@ class CreateNote {
 
       return await repository.createNote(note);
     } catch (e) {
-      throw Exception('Error al crear la nota: $e');
+      return Left(ServerFailure(message: 'Error al crear la nota: $e'));
     }
   }
 }

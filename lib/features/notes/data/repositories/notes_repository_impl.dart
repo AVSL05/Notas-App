@@ -1,4 +1,4 @@
-import 'package:dartz/dartz.dart';
+import 'package:dartz/dartz.dart' hide Task;
 import '../../domain/entities/note.dart' as entities;
 import '../../domain/repositories/notes_repository.dart';
 import '../datasources/notes_local_datasource.dart';
@@ -66,7 +66,7 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, void>> deleteMultipleNotes(List<String> ids) async {
+  Future<Either<Failure, void>> deleteNotes(List<String> ids) async {
     try {
       await localDataSource.deleteMultipleNotes(ids);
       return const Right(null);
@@ -76,7 +76,7 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, List<Note>>> searchNotes(String query) async {
+  Future<Either<Failure, List<entities.Note>>> searchNotes(String query) async {
     try {
       final notes = await localDataSource.searchNotes(query);
       return Right(notes.map((note) => note.toEntity()).toList());
@@ -86,7 +86,7 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, List<Note>>> getFilteredNotes({
+  Future<Either<Failure, List<entities.Note>>> getFilteredNotes({
     String? searchQuery,
     List<String>? tags,
     String? category,
@@ -128,7 +128,7 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, List<Note>>> getArchivedNotes() async {
+  Future<Either<Failure, List<entities.Note>>> getArchivedNotes() async {
     try {
       final notes = await localDataSource.getArchivedNotes();
       return Right(notes.map((note) => note.toEntity()).toList());
@@ -138,7 +138,7 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, List<Note>>> getFavoriteNotes() async {
+  Future<Either<Failure, List<entities.Note>>> getFavoriteNotes() async {
     try {
       final notes = await localDataSource.getFavoriteNotes();
       return Right(notes.map((note) => note.toEntity()).toList());
@@ -148,7 +148,7 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, List<Note>>> getPinnedNotes() async {
+  Future<Either<Failure, List<entities.Note>>> getPinnedNotes() async {
     try {
       final notes = await localDataSource.getPinnedNotes();
       return Right(notes.map((note) => note.toEntity()).toList());
@@ -158,7 +158,7 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, List<Note>>> getNotesByCategory(String category) async {
+  Future<Either<Failure, List<entities.Note>>> getNotesByCategory(String category) async {
     try {
       final notes = await localDataSource.getNotesByCategory(category);
       return Right(notes.map((note) => note.toEntity()).toList());
@@ -168,7 +168,7 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, List<Note>>> getNotesWithReminders() async {
+  Future<Either<Failure, List<entities.Note>>> getNotesWithReminders() async {
     try {
       final notes = await localDataSource.getNotesWithReminders();
       return Right(notes.map((note) => note.toEntity()).toList());
@@ -178,17 +178,7 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, List<Note>>> getNotesWithPendingTasks() async {
-    try {
-      final notes = await localDataSource.getNotesWithPendingTasks();
-      return Right(notes.map((note) => note.toEntity()).toList());
-    } catch (e) {
-      return Left(LocalFailure(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, Note>> pinNote(String id) async {
+  Future<Either<Failure, entities.Note>> pinNote(String id) async {
     try {
       final noteModel = await localDataSource.getNoteById(id);
       if (noteModel == null) {
@@ -208,7 +198,7 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, Note>> unpinNote(String id) async {
+  Future<Either<Failure, entities.Note>> unpinNote(String id) async {
     try {
       final noteModel = await localDataSource.getNoteById(id);
       if (noteModel == null) {
@@ -228,7 +218,7 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, Note>> archiveNote(String id) async {
+  Future<Either<Failure, entities.Note>> archiveNote(String id) async {
     try {
       final noteModel = await localDataSource.getNoteById(id);
       if (noteModel == null) {
@@ -248,7 +238,7 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, Note>> unarchiveNote(String id) async {
+  Future<Either<Failure, entities.Note>> unarchiveNote(String id) async {
     try {
       final noteModel = await localDataSource.getNoteById(id);
       if (noteModel == null) {
@@ -268,7 +258,7 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, Note>> favoriteNote(String id) async {
+  Future<Either<Failure, entities.Note>> favoriteNote(String id) async {
     try {
       final noteModel = await localDataSource.getNoteById(id);
       if (noteModel == null) {
@@ -288,7 +278,7 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, Note>> unfavoriteNote(String id) async {
+  Future<Either<Failure, entities.Note>> unfavoriteNote(String id) async {
     try {
       final noteModel = await localDataSource.getNoteById(id);
       if (noteModel == null) {
@@ -308,7 +298,7 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, Note>> setNoteColorTag(String id, String? colorTag) async {
+  Future<Either<Failure, entities.Note>> setNoteColorTag(String id, String? colorTag) async {
     try {
       final noteModel = await localDataSource.getNoteById(id);
       if (noteModel == null) {
@@ -328,7 +318,7 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, Note>> setNoteCategory(String id, String? category) async {
+  Future<Either<Failure, entities.Note>> setNoteCategory(String id, String? category) async {
     try {
       final noteModel = await localDataSource.getNoteById(id);
       if (noteModel == null) {
@@ -348,7 +338,7 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, Note>> setNoteReminder(String id, DateTime? reminderDate) async {
+  Future<Either<Failure, entities.Note>> setNoteReminder(String id, DateTime? reminderDate) async {
     try {
       final noteModel = await localDataSource.getNoteById(id);
       if (noteModel == null) {
@@ -368,7 +358,7 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, Note>> addTaskToNote(String noteId, Task task) async {
+  Future<Either<Failure, entities.Note>> addTaskToNote(String noteId, dynamic task) async {
     try {
       final noteModel = await localDataSource.getNoteById(noteId);
       if (noteModel == null) {
@@ -391,7 +381,7 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, Note>> updateTaskInNote(String noteId, Task task) async {
+  Future<Either<Failure, entities.Note>> updateTaskInNote(String noteId, dynamic task) async {
     try {
       final noteModel = await localDataSource.getNoteById(noteId);
       if (noteModel == null) {
@@ -419,7 +409,7 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, Note>> removeTaskFromNote(String noteId, String taskId) async {
+  Future<Either<Failure, entities.Note>> removeTaskFromNote(String noteId, String taskId) async {
     try {
       final noteModel = await localDataSource.getNoteById(noteId);
       if (noteModel == null) {
@@ -441,7 +431,7 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, Note>> addTagToNote(String noteId, String tag) async {
+  Future<Either<Failure, entities.Note>> addTagToNote(String noteId, String tag) async {
     try {
       final noteModel = await localDataSource.getNoteById(noteId);
       if (noteModel == null) {
@@ -467,7 +457,7 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, Note>> removeTagFromNote(String noteId, String tag) async {
+  Future<Either<Failure, entities.Note>> removeTagFromNote(String noteId, String tag) async {
     try {
       final noteModel = await localDataSource.getNoteById(noteId);
       if (noteModel == null) {
@@ -489,7 +479,7 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, Note>> duplicateNote(String id) async {
+  Future<Either<Failure, entities.Note>> duplicateNote(String id) async {
     try {
       final noteModel = await localDataSource.getNoteById(id);
       if (noteModel == null) {
@@ -566,19 +556,6 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, void>> importNotesFromJson(String jsonData) async {
-    try {
-      // En una implementación real, esto parsearía el JSON string
-      // Por ahora, asumimos que ya tenemos la lista de mapas
-      final List<Map<String, dynamic>> notesJson = [];
-      await localDataSource.importNotesFromJson(notesJson);
-      return const Right(null);
-    } catch (e) {
-      return Left(LocalFailure(message: e.toString()));
-    }
-  }
-
-  @override
   Future<Either<Failure, String>> createBackup() async {
     try {
       final backup = await localDataSource.createBackup();
@@ -600,78 +577,54 @@ class NotesRepositoryImpl implements NotesRepository {
     }
   }
 
-  // ===== MÉTODOS FALTANTES - IMPLEMENTACIONES BÁSICAS =====
+  // ===== MÉTODOS FALTANTES PARA COMPLETAR LA INTERFAZ =====
 
   @override
-  Future<Either<Failure, entities.Note>> addTaskToNote(String noteId, entities.Task task) async {
+  Future<Either<Failure, List<entities.Note>>> getNotesByTag(String tag) async {
     try {
-      final note = await localDataSource.getNoteById(noteId);
-      if (note == null) {
+      final notes = await localDataSource.getAllNotes();
+      final filteredNotes = notes.where((note) => note.tags.contains(tag)).toList();
+      return Right(filteredNotes.map((note) => note.toEntity()).toList());
+    } catch (e) {
+      return Left(LocalFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, entities.Note>> toggleFavorite(String id) async {
+    try {
+      final noteModel = await localDataSource.getNoteById(id);
+      if (noteModel == null) {
         return Left(LocalFailure(message: 'Nota no encontrada'));
       }
-      // Aquí iría la lógica para agregar la tarea
-      return Right(note.toEntity());
+      
+      final updatedNote = noteModel.copyWith(
+        isFavorite: !noteModel.isFavorite,
+        updatedAt: DateTime.now(),
+      );
+      
+      await localDataSource.updateNote(updatedNote);
+      return Right(updatedNote.toEntity());
     } catch (e) {
       return Left(LocalFailure(message: e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, String>> exportNotesToJson() async {
+  Future<Either<Failure, entities.Note>> togglePin(String id) async {
     try {
-      // Implementación básica - devolver JSON vacío por ahora
-      return const Right('{}');
-    } catch (e) {
-      return Left(LocalFailure(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<entities.Note>>> importNotesFromJson(String jsonData) async {
-    try {
-      // Implementación básica - devolver lista vacía por ahora
-      return const Right([]);
-    } catch (e) {
-      return Left(LocalFailure(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, Map<String, dynamic>>> exportNote(String id) async {
-    try {
-      final note = await localDataSource.getNoteById(id);
-      if (note == null) {
+      final noteModel = await localDataSource.getNoteById(id);
+      if (noteModel == null) {
         return Left(LocalFailure(message: 'Nota no encontrada'));
       }
-      return Right(note.toJson());
-    } catch (e) {
-      return Left(LocalFailure(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, entities.Note>> updateTaskInNote(String noteId, entities.Task task) async {
-    try {
-      final note = await localDataSource.getNoteById(noteId);
-      if (note == null) {
-        return Left(LocalFailure(message: 'Nota no encontrada'));
-      }
-      // Implementación básica
-      return Right(note.toEntity());
-    } catch (e) {
-      return Left(LocalFailure(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, entities.Note>> removeTaskFromNote(String noteId, String taskId) async {
-    try {
-      final note = await localDataSource.getNoteById(noteId);
-      if (note == null) {
-        return Left(LocalFailure(message: 'Nota no encontrada'));
-      }
-      // Implementación básica
-      return Right(note.toEntity());
+      
+      final updatedNote = noteModel.copyWith(
+        isPinned: !noteModel.isPinned,
+        updatedAt: DateTime.now(),
+      );
+      
+      await localDataSource.updateNote(updatedNote);
+      return Right(updatedNote.toEntity());
     } catch (e) {
       return Left(LocalFailure(message: e.toString()));
     }
@@ -680,54 +633,27 @@ class NotesRepositoryImpl implements NotesRepository {
   @override
   Future<Either<Failure, entities.Note>> toggleTaskCompletion(String noteId, String taskId) async {
     try {
-      final note = await localDataSource.getNoteById(noteId);
-      if (note == null) {
+      final noteModel = await localDataSource.getNoteById(noteId);
+      if (noteModel == null) {
         return Left(LocalFailure(message: 'Nota no encontrada'));
       }
-      // Implementación básica
-      return Right(note.toEntity());
-    } catch (e) {
-      return Left(LocalFailure(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<String>>> getAllTags() async {
-    try {
-      final notes = await localDataSource.getAllNotes();
-      final allTags = <String>{};
-      for (final note in notes) {
-        allTags.addAll(note.tags);
+      
+      final taskIndex = noteModel.tasks.indexWhere((t) => t.id == taskId);
+      if (taskIndex == -1) {
+        return Left(LocalFailure(message: 'Tarea no encontrada'));
       }
-      return Right(allTags.toList());
-    } catch (e) {
-      return Left(LocalFailure(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, entities.Note>> addTagToNote(String noteId, String tag) async {
-    try {
-      final note = await localDataSource.getNoteById(noteId);
-      if (note == null) {
-        return Left(LocalFailure(message: 'Nota no encontrada'));
-      }
-      // Implementación básica
-      return Right(note.toEntity());
-    } catch (e) {
-      return Left(LocalFailure(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, entities.Note>> removeTagFromNote(String noteId, String tag) async {
-    try {
-      final note = await localDataSource.getNoteById(noteId);
-      if (note == null) {
-        return Left(LocalFailure(message: 'Nota no encontrada'));
-      }
-      // Implementación básica
-      return Right(note.toEntity());
+      
+      final updatedTasks = List<TaskModel>.from(noteModel.tasks);
+      final task = updatedTasks[taskIndex];
+      updatedTasks[taskIndex] = task.copyWith(isCompleted: !task.isCompleted);
+      
+      final updatedNote = noteModel.copyWith(
+        tasks: updatedTasks,
+        updatedAt: DateTime.now(),
+      );
+      
+      await localDataSource.updateNote(updatedNote);
+      return Right(updatedNote.toEntity());
     } catch (e) {
       return Left(LocalFailure(message: e.toString()));
     }
@@ -736,7 +662,17 @@ class NotesRepositoryImpl implements NotesRepository {
   @override
   Future<Either<Failure, void>> deleteTag(String tag) async {
     try {
-      // Implementación básica
+      final notes = await localDataSource.getAllNotes();
+      for (final note in notes) {
+        if (note.tags.contains(tag)) {
+          final updatedTags = note.tags.where((t) => t != tag).toList();
+          final updatedNote = note.copyWith(
+            tags: updatedTags,
+            updatedAt: DateTime.now(),
+          );
+          await localDataSource.updateNote(updatedNote);
+        }
+      }
       return const Right(null);
     } catch (e) {
       return Left(LocalFailure(message: e.toString()));
@@ -746,24 +682,18 @@ class NotesRepositoryImpl implements NotesRepository {
   @override
   Future<Either<Failure, void>> renameTag(String oldTag, String newTag) async {
     try {
-      // Implementación básica
-      return const Right(null);
-    } catch (e) {
-      return Left(LocalFailure(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<String>>> getAllCategories() async {
-    try {
       final notes = await localDataSource.getAllNotes();
-      final allCategories = <String>{};
       for (final note in notes) {
-        if (note.category != null) {
-          allCategories.add(note.category!);
+        if (note.tags.contains(oldTag)) {
+          final updatedTags = note.tags.map((tag) => tag == oldTag ? newTag : tag).toList();
+          final updatedNote = note.copyWith(
+            tags: updatedTags,
+            updatedAt: DateTime.now(),
+          );
+          await localDataSource.updateNote(updatedNote);
         }
       }
-      return Right(allCategories.toList());
+      return const Right(null);
     } catch (e) {
       return Left(LocalFailure(message: e.toString()));
     }
@@ -772,12 +702,18 @@ class NotesRepositoryImpl implements NotesRepository {
   @override
   Future<Either<Failure, entities.Note>> changeNoteCategory(String noteId, String? category) async {
     try {
-      final note = await localDataSource.getNoteById(noteId);
-      if (note == null) {
+      final noteModel = await localDataSource.getNoteById(noteId);
+      if (noteModel == null) {
         return Left(LocalFailure(message: 'Nota no encontrada'));
       }
-      // Implementación básica
-      return Right(note.toEntity());
+      
+      final updatedNote = noteModel.copyWith(
+        category: category,
+        updatedAt: DateTime.now(),
+      );
+      
+      await localDataSource.updateNote(updatedNote);
+      return Right(updatedNote.toEntity());
     } catch (e) {
       return Left(LocalFailure(message: e.toString()));
     }
@@ -786,7 +722,16 @@ class NotesRepositoryImpl implements NotesRepository {
   @override
   Future<Either<Failure, void>> deleteCategory(String category) async {
     try {
-      // Implementación básica
+      final notes = await localDataSource.getAllNotes();
+      for (final note in notes) {
+        if (note.category == category) {
+          final updatedNote = note.copyWith(
+            category: null,
+            updatedAt: DateTime.now(),
+          );
+          await localDataSource.updateNote(updatedNote);
+        }
+      }
       return const Right(null);
     } catch (e) {
       return Left(LocalFailure(message: e.toString()));
@@ -796,7 +741,16 @@ class NotesRepositoryImpl implements NotesRepository {
   @override
   Future<Either<Failure, void>> renameCategory(String oldCategory, String newCategory) async {
     try {
-      // Implementación básica
+      final notes = await localDataSource.getAllNotes();
+      for (final note in notes) {
+        if (note.category == oldCategory) {
+          final updatedNote = note.copyWith(
+            category: newCategory,
+            updatedAt: DateTime.now(),
+          );
+          await localDataSource.updateNote(updatedNote);
+        }
+      }
       return const Right(null);
     } catch (e) {
       return Left(LocalFailure(message: e.toString()));
@@ -806,12 +760,18 @@ class NotesRepositoryImpl implements NotesRepository {
   @override
   Future<Either<Failure, entities.Note>> setReminder(String noteId, DateTime reminderDate) async {
     try {
-      final note = await localDataSource.getNoteById(noteId);
-      if (note == null) {
+      final noteModel = await localDataSource.getNoteById(noteId);
+      if (noteModel == null) {
         return Left(LocalFailure(message: 'Nota no encontrada'));
       }
-      // Implementación básica
-      return Right(note.toEntity());
+      
+      final updatedNote = noteModel.copyWith(
+        reminderDate: reminderDate,
+        updatedAt: DateTime.now(),
+      );
+      
+      await localDataSource.updateNote(updatedNote);
+      return Right(updatedNote.toEntity());
     } catch (e) {
       return Left(LocalFailure(message: e.toString()));
     }
@@ -820,12 +780,18 @@ class NotesRepositoryImpl implements NotesRepository {
   @override
   Future<Either<Failure, entities.Note>> removeReminder(String noteId) async {
     try {
-      final note = await localDataSource.getNoteById(noteId);
-      if (note == null) {
+      final noteModel = await localDataSource.getNoteById(noteId);
+      if (noteModel == null) {
         return Left(LocalFailure(message: 'Nota no encontrada'));
       }
-      // Implementación básica
-      return Right(note.toEntity());
+      
+      final updatedNote = noteModel.copyWith(
+        reminderDate: null,
+        updatedAt: DateTime.now(),
+      );
+      
+      await localDataSource.updateNote(updatedNote);
+      return Right(updatedNote.toEntity());
     } catch (e) {
       return Left(LocalFailure(message: e.toString()));
     }
@@ -834,13 +800,12 @@ class NotesRepositoryImpl implements NotesRepository {
   @override
   Future<Either<Failure, List<entities.Note>>> getNotesWithActiveReminders() async {
     try {
-      final notes = await localDataSource.getAllNotes();
+      final notes = await localDataSource.getNotesWithReminders();
       final now = DateTime.now();
-      final notesWithReminders = notes
-          .where((note) => note.reminderDate != null && note.reminderDate!.isAfter(now))
-          .map((note) => note.toEntity())
-          .toList();
-      return Right(notesWithReminders);
+      final activeReminders = notes.where((note) => 
+        note.reminderDate != null && note.reminderDate!.isAfter(now)
+      ).toList();
+      return Right(activeReminders.map((note) => note.toEntity()).toList());
     } catch (e) {
       return Left(LocalFailure(message: e.toString()));
     }
@@ -849,29 +814,12 @@ class NotesRepositoryImpl implements NotesRepository {
   @override
   Future<Either<Failure, List<entities.Note>>> getNotesWithOverdueReminders() async {
     try {
-      final notes = await localDataSource.getAllNotes();
+      final notes = await localDataSource.getNotesWithReminders();
       final now = DateTime.now();
-      final overdueNotes = notes
-          .where((note) => note.reminderDate != null && note.reminderDate!.isBefore(now))
-          .map((note) => note.toEntity())
-          .toList();
-      return Right(overdueNotes);
-    } catch (e) {
-      return Left(LocalFailure(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, Map<String, dynamic>>> getNotesStatistics() async {
-    try {
-      final notes = await localDataSource.getAllNotes();
-      final stats = {
-        'totalNotes': notes.length,
-        'pinnedNotes': notes.where((n) => n.isPinned).length,
-        'favoriteNotes': notes.where((n) => n.isFavorite).length,
-        'archivedNotes': notes.where((n) => n.isArchived).length,
-      };
-      return Right(stats);
+      final overdueReminders = notes.where((note) => 
+        note.reminderDate != null && note.reminderDate!.isBefore(now)
+      ).toList();
+      return Right(overdueReminders.map((note) => note.toEntity()).toList());
     } catch (e) {
       return Left(LocalFailure(message: e.toString()));
     }
@@ -909,19 +857,51 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   @override
-  Future<Either<Failure, void>> cleanupArchivedNotes() async {
+  Future<Either<Failure, List<entities.Note>>> importNotesFromJson(String jsonData) async {
     try {
-      // Implementación básica
-      return const Right(null);
+      // En una implementación real, esto parsearía el JSON string
+      // Por ahora, asumimos que ya tenemos la lista de mapas
+      final List<Map<String, dynamic>> notesJson = [];
+      await localDataSource.importNotesFromJson(notesJson);
+      
+      // Devolver las notas importadas
+      final notes = await localDataSource.getAllNotes();
+      return Right(notes.map((note) => note.toEntity()).toList());
     } catch (e) {
       return Left(LocalFailure(message: e.toString()));
     }
   }
 
   @override
+  Future<Either<Failure, Map<String, dynamic>>> exportNote(String id) async {
+    try {
+      final note = await localDataSource.getNoteById(id);
+      if (note == null) {
+        return Left(LocalFailure(message: 'Nota no encontrada'));
+      }
+      return Right(note.toJson());
+    } catch (e) {
+      return Left(LocalFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> cleanupArchivedNotes() async {
+    try {
+      final archivedNotes = await localDataSource.getArchivedNotes();
+      for (final note in archivedNotes) {
+        await localDataSource.deleteNote(note.id);
+      }
+      return const Right(null);
+    } catch (e) {
+      return Left(LocalFailure(message: e.toString()));
+    }
+  }
+
+    @override
   Future<Either<Failure, void>> backupNotes() async {
     try {
-      // Implementación básica
+      await localDataSource.createBackup();
       return const Right(null);
     } catch (e) {
       return Left(LocalFailure(message: e.toString()));

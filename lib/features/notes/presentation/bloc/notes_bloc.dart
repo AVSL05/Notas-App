@@ -108,10 +108,8 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       content: event.content,
       tasks: event.tasks ?? [],
       tags: event.tags ?? [],
-      createdAt: now,
-      updatedAt: now,
       reminderDate: event.reminderDate,
-      colorTag: event.colorTag,
+      colorTag: event.colorTag ?? 'default',
       category: event.category,
     );
     
@@ -210,9 +208,8 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       isArchived: event.isArchived,
       isFavorite: event.isFavorite,
       category: event.category,
-      colorTag: event.colorTag,
-      startDate: event.startDate,
-      endDate: event.endDate,
+      createdAfter: event.startDate,
+      createdBefore: event.endDate,
       hasReminder: event.hasReminder,
       hasTasks: event.hasTasks,
       tags: event.tags,
