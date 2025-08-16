@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../domain/entities/task.dart' as TaskEntity;
+import '../../domain/entities/task_filter.dart';
 import '../bloc/tasks_bloc.dart';
 import '../bloc/tasks_event.dart';
 import '../bloc/tasks_state.dart';
@@ -170,7 +171,7 @@ class _TasksPageState extends State<TasksPage> {
                   icon: const Icon(Icons.clear),
                   onPressed: () {
                     _searchController.clear();
-                    context.read<TasksBloc>().add(const SearchTasks(''));
+                    context.read<TasksBloc>().add(const SearchTasksEvent(''));
                   },
                 )
               : null,
@@ -179,7 +180,7 @@ class _TasksPageState extends State<TasksPage> {
           ),
         ),
         onChanged: (query) {
-          context.read<TasksBloc>().add(SearchTasks(query));
+          context.read<TasksBloc>().add(SearchTasksEvent(query));
         },
       ),
     );
@@ -372,7 +373,7 @@ class _TasksPageState extends State<TasksPage> {
           TextButton(
             onPressed: () {
               Navigator.of(dialogContext).pop();
-              context.read<TasksBloc>().add(DeleteTask(task.id));
+              context.read<TasksBloc>().add(DeleteTaskEvent(task.id));
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Delete'),
@@ -383,19 +384,20 @@ class _TasksPageState extends State<TasksPage> {
   }
 
   String _getFilterLabel(TaskFilter filter) {
-    switch (filter) {
-      case TaskFilter.all:
-        return 'All';
-      case TaskFilter.pending:
-        return 'Pending';
-      case TaskFilter.completed:
-        return 'Completed';
-      case TaskFilter.highPriority:
-        return 'High Priority';
-      case TaskFilter.dueToday:
-        return 'Due Today';
-      case TaskFilter.overdue:
-        return 'Overdue';
+    if (filter == TaskFilter.all) {
+      return 'All';
+    } else if (filter == TaskFilter.pending) {
+      return 'Pending';
+    } else if (filter == TaskFilter.completed) {
+      return 'Completed';
+    } else if (filter == TaskFilter.highPriority) {
+      return 'High Priority';
+    } else if (filter == TaskFilter.dueToday) {
+      return 'Due Today';
+    } else if (filter == TaskFilter.overdue) {
+      return 'Overdue';
+    } else {
+      return 'Unknown';
     }
   }
 }
@@ -524,12 +526,14 @@ class _CreateTaskDialogState extends State<_CreateTaskDialog> {
         ElevatedButton(
           onPressed: () {
             if (_formKey.currentState!.validate()) {
-              context.read<TasksBloc>().add(CreateTask(
+              final task = TaskEntity.Task.create(
+                id: DateTime.now().millisecondsSinceEpoch.toString(),
                 title: _titleController.text.trim(),
                 description: _descriptionController.text.trim(),
                 priority: _priority,
                 dueDate: _dueDate,
-              ));
+              );
+              context.read<TasksBloc>().add(CreateTaskEvent(task));
               Navigator.of(context).pop();
             }
           },
